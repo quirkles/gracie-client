@@ -1,1 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'assets/styles/settings';
+@import 'node_modules/foundation-sites/scss/foundation';
+
+@include foundation-everything;
+
+$font-family-serif: 'Merriweather', Georgia, Times, ‘Times New Roman’, serif;
+
+
+.font-serif {
+  font-family: $font-family-serif;
+}
