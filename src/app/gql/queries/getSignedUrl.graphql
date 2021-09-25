@@ -1,0 +1,4 @@
+query getUploadSignedUrl ($input: GetUploadSignedUrlInput!) {
+  getUploadSignedUrl(input: $input)
+}
+

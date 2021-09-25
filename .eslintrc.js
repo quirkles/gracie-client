@@ -6,6 +6,7 @@ module.exports = {
   'extends': [
     'google',
   ],
+  'ignorePatterns': ['**/*.html', '**/*.graphql', '**/*.gql'],
   'parser': '@typescript-eslint/parser',
   'parserOptions': {
     'ecmaVersion': 12,
@@ -15,6 +16,7 @@ module.exports = {
     '@typescript-eslint',
   ],
   'rules': {
+    'max-len': [2, 120],
     'new-cap': ['error', {'capIsNew': false}],
     'require-jsdoc': ['error', {
       'require': {
