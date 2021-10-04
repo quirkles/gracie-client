@@ -1,6 +1,9 @@
 <div id="image-uploader-container">
   <h1>Image uploader</h1>
-  <app-uploader>
+  <app-file-selector [acceptedFiletypes]=acceptedFiletypes (files)="onFileSelected($event)">
     <div id="image-uploader-area"></div>
-  </app-uploader>
+  </app-file-selector>
+  <div class="image-list" >
+    <div *ngFor="let file of files;"></div>
+  </div>
 </div>

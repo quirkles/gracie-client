@@ -40,7 +40,6 @@ export type CreatePostResponse = BadInput | Post | Unauthorized;
 export type CreateUserResponse = BadInput | Unauthorized | User;
 
 export type GetUploadSignedUrlInput = {
-  bucketName: Scalars['String'];
   fileName: Scalars['String'];
 };
 
@@ -76,7 +75,9 @@ export type MutationCreatePostArgs = {
 
 
 export type MutationCreateUserArgs = {
-  input?: Maybe<CreateMediaInput>;
+  name: Scalars['String'];
+  password: Scalars['String'];
+  roleName: Scalars['String'];
 };
 
 export type Post = {

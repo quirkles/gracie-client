@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "dev": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -24,6 +25,7 @@
     "@google-cloud/storage": "^5.14.0",
     "apollo": "^2.33.6",
     "apollo-angular": "^2.6.0",
+    "axios": "^0.22.0",
     "foundation-sites": "^6.6.3",
     "graphql": "^15.0.0",
     "rxjs": "~6.6.0",
