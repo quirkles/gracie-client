@@ -1,7 +1,14 @@
-.file-selector-input {
-  display: none;
-  height: 0px;
-  width: 0px;
-  margin: 0px;
-  padding: 0px;
+div.file-selector-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .file-selector-input {
+    display: none;
+    height: 0px;
+    width: 0px;
+    margin: 0px;
+    padding: 0px;
+  }
 }

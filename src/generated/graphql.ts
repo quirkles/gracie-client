@@ -24,14 +24,14 @@ export type BadInput = {
 
 export type CreateMediaInput = {
   caption?: Maybe<Scalars['String']>;
-  title: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
   type?: Maybe<MediaType>;
   url: Scalars['String'];
 };
 
 export type CreatePostInput = {
   body?: Maybe<Scalars['String']>;
-  media?: Maybe<Array<Maybe<CreateMediaInput>>>;
+  media?: Maybe<Array<CreateMediaInput>>;
   title: Scalars['String'];
 };
 
@@ -48,7 +48,8 @@ export type Media = {
   caption?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
-  type?: Maybe<Scalars['String']>;
+  type?: Maybe<MediaType>;
+  url: Scalars['String'];
 };
 
 export enum MediaType {
@@ -85,6 +86,7 @@ export type Post = {
   body?: Maybe<Scalars['String']>;
   contributors?: Maybe<Array<Maybe<User>>>;
   id?: Maybe<Scalars['String']>;
+  media?: Maybe<Array<Maybe<Media>>>;
   title?: Maybe<Scalars['String']>;
 };
 
@@ -122,7 +124,7 @@ export type User = {
   __typename?: 'User';
   id?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
-  role?: Maybe<Role>;
+  role?: Maybe<Scalars['String']>;
 };
 
 export type UserNotFound = {
@@ -136,6 +138,13 @@ export type UserWithToken = {
   user?: Maybe<User>;
 };
 
+export type CreatePostMutationVariables = Exact<{
+  input: CreatePostInput;
+}>;
+
+
+export type CreatePostMutation = { __typename?: 'Mutation', createPost?: Maybe<{ __typename?: 'BadInput', message?: Maybe<string> } | { __typename?: 'Post', id?: Maybe<string>, title?: Maybe<string>, body?: Maybe<string>, contributors?: Maybe<Array<Maybe<{ __typename?: 'User', role?: Maybe<string>, id?: Maybe<string>, name?: Maybe<string> }>>>, media?: Maybe<Array<Maybe<{ __typename?: 'Media', title?: Maybe<string>, caption?: Maybe<string>, url: string }>>> } | { __typename?: 'Unauthorized', message?: Maybe<string> }> };
+
 export type GetUploadSignedUrlQueryVariables = Exact<{
   input: GetUploadSignedUrlInput;
 }>;
@@ -143,6 +152,44 @@ export type GetUploadSignedUrlQueryVariables = Exact<{
 
 export type GetUploadSignedUrlQuery = { __typename?: 'Query', getUploadSignedUrl: string };
 
+export const CreatePostDocument = gql`
+    mutation createPost($input: CreatePostInput!) {
+  createPost(input: $input) {
+    ... on Post {
+      id
+      title
+      body
+      contributors {
+        role
+        id
+        name
+      }
+      media {
+        title
+        caption
+        url
+      }
+    }
+    ... on BadInput {
+      message
+    }
+    ... on Unauthorized {
+      message
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class CreatePostGQL extends Apollo.Mutation<CreatePostMutation, CreatePostMutationVariables> {
+    document = CreatePostDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const GetUploadSignedUrlDocument = gql`
     query getUploadSignedUrl($input: GetUploadSignedUrlInput!) {
   getUploadSignedUrl(input: $input)

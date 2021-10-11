@@ -1,0 +1,18 @@
+<div class="{{editing ? 'is-editing' : ''}}" xmlns="http://www.w3.org/1999/html">
+  <span (click)="startEditing()">{{localValue.value}}</span>
+  <form #form (submit)="onSubmit($event)">
+    <textarea
+      *ngIf="inputType==='textarea'"
+      (blur)="stopEditing()"
+      name="localValue"
+      [formControl]="localValue"
+    ></textarea>
+    <input
+      *ngIf="inputType==='text'"
+      type="text"
+      name="localValue"
+      (blur)="stopEditing()"
+      [formControl]="localValue"
+    />
+  </form>
+</div>

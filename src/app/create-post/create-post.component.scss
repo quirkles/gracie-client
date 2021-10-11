@@ -1,0 +1,15 @@
+.create-post {
+  margin: 0 1rem;
+  .section {
+    margin: 1rem;
+  }
+  .add-image-button-container {
+    height: 100%;
+    button {
+      min-height: 6rem;
+      max-height: 90%;
+      flex-grow: 1;
+      font-size: x-large;
+    }
+  }
+}

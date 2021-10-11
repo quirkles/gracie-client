@@ -39,6 +39,9 @@ export class FileSelectorComponent implements OnInit {
   }
   onFileChange(ev: Event):void {
     ev.preventDefault();
-    this.files.emit(Array.from((ev?.target as HTMLInputElement)?.files || []));
+    const input: HTMLInputElement = ev.target as HTMLInputElement;
+    if (input.files && input.files.length) {
+      this.files.emit(Array.from(input.files || []));
+    }
   }
 }

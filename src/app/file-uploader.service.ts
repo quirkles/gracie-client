@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+
 import axios from 'axios';
 import {Apollo} from 'apollo-angular';
+import {v4} from 'uuid';
+
 import {GetUploadSignedUrlGQL} from '../generated/graphql';
-import {FILE_UPLOADER_URL} from './config';
 
 @Injectable({
   providedIn: 'root',
@@ -15,18 +17,21 @@ export class FileUploaderService {
     private getSignedUrlQuery: GetUploadSignedUrlGQL,
   ) {}
 
-  uploadFile(folderName: string, file:File): Promise<any> {
+  uploadFile(folderName: string, file:File): Promise<string> {
+    const fileName = v4();
+    let url: string;
     return new Promise((resolve, reject) => {
       this.getSignedUrlQuery.fetch({input: {
-        fileName: `${folderName}/${file.name}`,
+        fileName: `${folderName}/${fileName}`,
       }}).subscribe(async (result) => {
         try {
-          const response = await axios.put(result.data.getUploadSignedUrl, file, {
+          await axios.put(result.data.getUploadSignedUrl, file, {
             headers: {
               'Content-Type': 'application/octet-stream',
             },
           });
-          resolve(response.data);
+          url = result.data.getUploadSignedUrl.split('?')[0];
+          resolve(url);
         } catch (err) {
           console.log(err) //eslint-disable-line
           reject(err);

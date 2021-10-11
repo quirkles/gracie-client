@@ -1,0 +1,27 @@
+mutation createPost ($input: CreatePostInput!) {
+  createPost(
+    input: $input
+  ) {
+    ... on Post {
+      id,
+      title,
+      body,
+      contributors {
+        role,
+        id,
+        name
+      }
+      media {
+        title,
+        caption,
+        url
+      }
+    }
+    ... on BadInput {
+      message
+    }
+    ... on Unauthorized {
+      message
+    }
+  }
+}

@@ -1,0 +1,56 @@
+<div class="create-post">
+  <h1>Create new post!</h1>
+  <mat-divider></mat-divider>
+  <div class="section">
+    <h2>Date</h2>
+    <mat-form-field class="example-form-field" appearance="fill">
+      <input
+        matInput
+        [matDatepicker]="picker"
+        [formControl]="date"
+        (change)="handleDateChange()"
+      >
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+
+      <mat-datepicker #picker (change)="handleDateChange()"></mat-datepicker>
+    </mat-form-field>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="section">
+    <h2>Title</h2>
+    <app-editable-text
+      value="{{postTitle}}"
+      (valueChange)="handleTitleChange($event)"
+    ></app-editable-text>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="section">
+    <h2>Description</h2>
+    <app-editable-text
+      value="{{postBody}}"
+      inputType="textarea"
+      (valueChange)="handleBodyChange($event)">
+    </app-editable-text>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="section">
+    <div class="grid-container">
+      <div class="grid-x grid-margin-x">
+        <div class="cell small-4">
+          <div class="add-image-button-container">
+            <app-file-selector (files)="handleFileChange($event)">
+              <button type="button large" class="button">Add Image by clicking me or dragging images here</button>
+            </app-file-selector>
+          </div>
+        </div>
+        <div *ngFor="let mediaItem of media" class="cell small-4">
+          <app-editable-image [mediaItem]=mediaItem (mediaChange)="handleMediaChange($event)"></app-editable-image>
+        </div>
+      </div>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="section">
+    <button type="button" class="success button {{canSave ? '' : 'disabled'}}" (click)="savePost()">Save</button>
+  </div>
+</div>

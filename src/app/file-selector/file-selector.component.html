@@ -1,4 +1,4 @@
-<div (click)="onClick()" (drop)="onDrop($event)" (dragenter)="onDragEnter($event)" (dragover)="onDragEnter($event)">
+<div class="file-selector-wrapper" (click)="onClick()" (drop)="onDrop($event)" (dragenter)="onDragEnter($event)" (dragover)="onDragEnter($event)">
   <input #fileInput class="file-selector-input" type="file" (change)="onFileChange($event)" accept="{{acceptedFiletypes.join(',')}}">
   <ng-content></ng-content>
 </div>
