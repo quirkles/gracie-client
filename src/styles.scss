@@ -35,6 +35,7 @@ $gracie-client-theme: mat.define-light-theme((
 
 @import 'assets/styles/settings';
 @import 'node_modules/foundation-sites/scss/foundation';
+@import "assets/foundation-icons/foundation-icons.css";
 
 @include foundation-everything();
 

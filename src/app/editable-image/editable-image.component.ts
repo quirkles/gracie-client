@@ -9,6 +9,7 @@ import {Media} from '../../generated/graphql';
 export class EditableImageComponent implements OnInit {
   @Input() mediaItem!: Media
   @Output() mediaChange:EventEmitter<Media> = new EventEmitter()
+  @Output() close:EventEmitter<void> = new EventEmitter()
   constructor() {
   }
 
@@ -26,5 +27,8 @@ export class EditableImageComponent implements OnInit {
       ...this.mediaItem,
       caption,
     });
+  }
+  handleCloseClick() {
+    this.close.emit();
   }
 }

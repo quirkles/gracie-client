@@ -1,8 +1,10 @@
+import moment from 'moment';
+import {v4} from 'uuid';
 import {Component, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {FileUploaderService} from '../file-uploader.service';
-import {CreatePostGQL, Media, MediaType} from '../../generated/graphql';
-import moment from 'moment';
+import {Media, MediaType, SavePostGQL} from '../../generated/graphql';
+import {Alert, AlertsService} from '../alerts.service';
 
 @Component({
   selector: 'app-create-post',
@@ -11,6 +13,7 @@ import moment from 'moment';
 })
 export class CreatePostComponent implements OnInit {
   postTitle: string = 'Our fun day!'
+  postId: string | null = v4()
   postBody: string = 'These are all the fun things we did...'
   date: FormControl = new FormControl(moment(new Date()))
   canSave = false
@@ -18,7 +21,8 @@ export class CreatePostComponent implements OnInit {
 
   constructor(
     private fileUploaderService: FileUploaderService,
-    private createPostMutation: CreatePostGQL,
+    private savePostMutation: SavePostGQL,
+    private alertsService: AlertsService,
   ) { }
 
   ngOnInit(): void {
@@ -45,11 +49,11 @@ export class CreatePostComponent implements OnInit {
       }
       return existing;
     });
-    console.log(this.media) //eslint-disable-line
   }
 
   addMediaItem(url: string) {
     this.media.push({
+      id: v4(),
       url,
       title: '',
       caption: '',
@@ -64,18 +68,26 @@ export class CreatePostComponent implements OnInit {
         this.addMediaItem(url);
       });
     }
-    console.log(files) //eslint-disable-line
+  }
+
+  handleMediaDelete(mediaToDelete: Media) {
+    this.media = this.media.filter((media) => media.id !== mediaToDelete.id);
   }
 
   savePost(): void {
     const post = {
+      id: this.postId,
       body: this.postBody,
       title: this.postTitle,
       date: this.date.value.toDate(),
       media: this.media as Media[],
     };
-    this.createPostMutation.mutate({input: post}).subscribe((result) => {
-      console.log(result) //eslint-disable-line
+    this.savePostMutation.mutate({input: post}).subscribe((result) => {
+      if (result.data?.savePost?.__typename === 'Post') {
+        this.media = result.data?.savePost?.media?.map(({__typename, ...rest}) => rest) || this.media || [];
+      } else {
+        this.alertsService.alert(new Alert('Oops! Something went wrong creating the post.', 'alert'));
+      }
     });
   }
 }

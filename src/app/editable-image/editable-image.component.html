@@ -1,4 +1,5 @@
 <div class="card">
+  <i class="fi-x" (click)="handleCloseClick()"></i>
   <img src="{{mediaItem.url}}">
   <div class="card-section">
     <app-editable-text [value]="mediaItem.title || 'Title'" (valueChange)="handleTitleChange($event)"></app-editable-text>

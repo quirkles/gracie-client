@@ -13,9 +13,7 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
   }));
 
   const auth = setContext((operation, context) => {
-    // eslint-disable-next-line max-len
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNiZTdmYTE3LTg1NDItNDAwMy05OTVlLWVlZmUwY2ExZGJkMiIsImlhdCI6MTYzMzkwODgzNywiZXhwIjoxNjM5MDkyODM3fQ.l_rC9auYy7tZomYGa0YLk8TgqfU820csk5F4QHvdgHQ';
-
+    const token = localStorage.getItem('gracie-gql-token');
     if (token === null) {
       return {};
     } else {
@@ -28,7 +26,19 @@ export function createApollo(httpLink: HttpLink): ApolloClientOptions<any> {
   });
 
   const link = ApolloLink.from([basic, auth, httpLink.create({uri})]);
-  const cache = new InMemoryCache();
+  const cache = new InMemoryCache({
+    typePolicies: {
+      Post: {
+        fields: {
+          media: {
+            merge(existing = [], incoming: any[]) {
+              return [...existing, ...incoming];
+            },
+          },
+        },
+      },
+    },
+  });
 
   return {
     link,

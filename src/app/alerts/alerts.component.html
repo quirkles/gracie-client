@@ -1,0 +1,10 @@
+<div class="alert-container">
+  <div
+    *ngFor="let alert of alerts"
+    data-alert
+    class="callout {{alert.type}} small">
+    <p>
+      {{alert.body}}
+    </p>
+  </div>
+</div>

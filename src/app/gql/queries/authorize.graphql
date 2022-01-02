@@ -1,0 +1,19 @@
+mutation authorize ($name: String!, $password: String!) {
+  authorize(
+    name: $name, password: $password
+  ) {
+    ... on UserWithToken {
+      user {
+        id
+      }
+      token
+    }
+    ... on UserNotFound {
+      message,
+    }
+    ... on ServerError {
+      message,
+      reason
+    }
+  }
+}

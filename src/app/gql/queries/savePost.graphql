@@ -1,5 +1,5 @@
-mutation createPost ($input: CreatePostInput!) {
-  createPost(
+mutation savePost ($input: SavePostInput!) {
+  savePost(
     input: $input
   ) {
     ... on Post {
@@ -12,16 +12,24 @@ mutation createPost ($input: CreatePostInput!) {
         name
       }
       media {
+        id,
         title,
         caption,
+        type,
         url
       }
     }
     ... on BadInput {
-      message
+      message,
+      reason
     }
     ... on Unauthorized {
-      message
+      message,
+      reason
+    }
+    ... on ServerError {
+      message,
+      reason
     }
   }
 }

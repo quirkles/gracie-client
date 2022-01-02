@@ -1,0 +1,13 @@
+.alert-container {
+  position: fixed;
+  top: 1em;
+  right: 1em;
+  display: flex;
+  flex-direction: column;
+  > div {
+    p {
+      text-align: center;
+    }
+  }
+
+}

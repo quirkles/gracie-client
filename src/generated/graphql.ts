@@ -1,5 +1,5 @@
-import { gql } from 'apollo-angular';
-import { Injectable } from '@angular/core';
+import {gql} from 'apollo-angular';
+import {Injectable} from '@angular/core';
 import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -14,7 +14,7 @@ export type Scalars = {
   Float: number;
 };
 
-export type AuthorizeResponse = UserNotFound | UserWithToken;
+export type AuthorizeResponse = ServerError | UserNotFound | UserWithToken;
 
 export type BadInput = {
   __typename?: 'BadInput';
@@ -22,22 +22,12 @@ export type BadInput = {
   reason?: Maybe<Scalars['String']>;
 };
 
-export type CreateMediaInput = {
-  caption?: Maybe<Scalars['String']>;
-  title?: Maybe<Scalars['String']>;
-  type?: Maybe<MediaType>;
-  url: Scalars['String'];
+export type CreateUserResponse = BadInput | ServerError | Unauthorized | User;
+
+export type Edge = {
+  __typename?: 'Edge';
+  node?: Maybe<Post>;
 };
-
-export type CreatePostInput = {
-  body?: Maybe<Scalars['String']>;
-  media?: Maybe<Array<CreateMediaInput>>;
-  title: Scalars['String'];
-};
-
-export type CreatePostResponse = BadInput | Post | Unauthorized;
-
-export type CreateUserResponse = BadInput | Unauthorized | User;
 
 export type GetUploadSignedUrlInput = {
   fileName: Scalars['String'];
@@ -48,7 +38,7 @@ export type Media = {
   caption?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
-  type?: Maybe<MediaType>;
+  type: MediaType;
   url: Scalars['String'];
 };
 
@@ -59,8 +49,8 @@ export enum MediaType {
 export type Mutation = {
   __typename?: 'Mutation';
   authorize?: Maybe<AuthorizeResponse>;
-  createPost?: Maybe<CreatePostResponse>;
   createUser?: Maybe<CreateUserResponse>;
+  savePost?: Maybe<SavePostResponse>;
 };
 
 
@@ -70,32 +60,48 @@ export type MutationAuthorizeArgs = {
 };
 
 
-export type MutationCreatePostArgs = {
-  input: CreatePostInput;
-};
-
-
 export type MutationCreateUserArgs = {
   name: Scalars['String'];
   password: Scalars['String'];
   roleName: Scalars['String'];
 };
 
+
+export type MutationSavePostArgs = {
+  input: SavePostInput;
+};
+
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  endCursor?: Maybe<Scalars['String']>;
+  hasNextPage?: Maybe<Scalars['Boolean']>;
+  hasPreviousPage?: Maybe<Scalars['Boolean']>;
+  startCursor?: Maybe<Scalars['String']>;
+};
+
 export type Post = {
   __typename?: 'Post';
   body?: Maybe<Scalars['String']>;
-  contributors?: Maybe<Array<Maybe<User>>>;
+  contributors?: Maybe<Array<User>>;
+  date?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
-  media?: Maybe<Array<Maybe<Media>>>;
+  media?: Maybe<Array<Media>>;
   title?: Maybe<Scalars['String']>;
+};
+
+export type PostConnection = {
+  __typename?: 'PostConnection';
+  edges: Array<Maybe<Edge>>;
+  pageInfo: PageInfo;
 };
 
 export type Query = {
   __typename?: 'Query';
   encryptTest: Scalars['String'];
-  getRoles: Array<Maybe<Role>>;
+  getPostConnection: PostConnection;
+  getRoles: Array<Maybe<RoleType>>;
   getUploadSignedUrl: Scalars['String'];
-  getUserById: User;
+  validateToken: Scalars['Boolean'];
 };
 
 
@@ -108,10 +114,45 @@ export type QueryGetUploadSignedUrlArgs = {
   input: GetUploadSignedUrlInput;
 };
 
-export type Role = {
-  __typename?: 'Role';
+
+export type QueryValidateTokenArgs = {
+  token: Scalars['String'];
+};
+
+export enum RoleType {
+  Auntie = 'AUNTIE',
+  Dad = 'DAD',
+  Friend = 'FRIEND',
+  Granddad = 'GRANDDAD',
+  Grandma = 'GRANDMA',
+  Me = 'ME',
+  Mum = 'MUM',
+  NoRelation = 'NO_RELATION',
+  Uncle = 'UNCLE'
+}
+
+export type SaveMediaInput = {
+  caption?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+  type: MediaType;
+  url: Scalars['String'];
+};
+
+export type SavePostInput = {
+  body?: Maybe<Scalars['String']>;
+  date?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['String']>;
+  media?: Maybe<Array<SaveMediaInput>>;
+  title: Scalars['String'];
+};
+
+export type SavePostResponse = BadInput | Post | ServerError | Unauthorized;
+
+export type ServerError = {
+  __typename?: 'ServerError';
+  message?: Maybe<Scalars['String']>;
+  reason?: Maybe<Scalars['String']>;
 };
 
 export type Unauthorized = {
@@ -138,12 +179,13 @@ export type UserWithToken = {
   user?: Maybe<User>;
 };
 
-export type CreatePostMutationVariables = Exact<{
-  input: CreatePostInput;
+export type AuthorizeMutationVariables = Exact<{
+  name: Scalars['String'];
+  password: Scalars['String'];
 }>;
 
 
-export type CreatePostMutation = { __typename?: 'Mutation', createPost?: Maybe<{ __typename?: 'BadInput', message?: Maybe<string> } | { __typename?: 'Post', id?: Maybe<string>, title?: Maybe<string>, body?: Maybe<string>, contributors?: Maybe<Array<Maybe<{ __typename?: 'User', role?: Maybe<string>, id?: Maybe<string>, name?: Maybe<string> }>>>, media?: Maybe<Array<Maybe<{ __typename?: 'Media', title?: Maybe<string>, caption?: Maybe<string>, url: string }>>> } | { __typename?: 'Unauthorized', message?: Maybe<string> }> };
+export type AuthorizeMutation = { __typename?: 'Mutation', authorize?: Maybe<{ __typename?: 'ServerError', message?: Maybe<string>, reason?: Maybe<string> } | { __typename?: 'UserNotFound', message?: Maybe<string> } | { __typename?: 'UserWithToken', token?: Maybe<string>, user?: Maybe<{ __typename?: 'User', id?: Maybe<string> }> }> };
 
 export type GetUploadSignedUrlQueryVariables = Exact<{
   input: GetUploadSignedUrlInput;
@@ -152,9 +194,69 @@ export type GetUploadSignedUrlQueryVariables = Exact<{
 
 export type GetUploadSignedUrlQuery = { __typename?: 'Query', getUploadSignedUrl: string };
 
-export const CreatePostDocument = gql`
-    mutation createPost($input: CreatePostInput!) {
-  createPost(input: $input) {
+export type SavePostMutationVariables = Exact<{
+  input: SavePostInput;
+}>;
+
+
+export type SavePostMutation = { __typename?: 'Mutation', savePost?: Maybe<{ __typename?: 'BadInput', message?: Maybe<string>, reason?: Maybe<string> } | { __typename?: 'Post', id?: Maybe<string>, title?: Maybe<string>, body?: Maybe<string>, contributors?: Maybe<Array<{ __typename?: 'User', role?: Maybe<string>, id?: Maybe<string>, name?: Maybe<string> }>>, media?: Maybe<Array<{ __typename?: 'Media', id?: Maybe<string>, title?: Maybe<string>, caption?: Maybe<string>, type: MediaType, url: string }>> } | { __typename?: 'ServerError', message?: Maybe<string>, reason?: Maybe<string> } | { __typename?: 'Unauthorized', message?: Maybe<string>, reason?: Maybe<string> }> };
+
+export type ValidateTokenQueryVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type ValidateTokenQuery = { __typename?: 'Query', validateToken: boolean };
+
+export const AuthorizeDocument = gql`
+    mutation authorize($name: String!, $password: String!) {
+  authorize(name: $name, password: $password) {
+    ... on UserWithToken {
+      user {
+        id
+      }
+      token
+    }
+    ... on UserNotFound {
+      message
+    }
+    ... on ServerError {
+      message
+      reason
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root',
+  })
+export class AuthorizeGQL extends Apollo.Mutation<AuthorizeMutation, AuthorizeMutationVariables> {
+    document = AuthorizeDocument;
+
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+}
+export const GetUploadSignedUrlDocument = gql`
+    query getUploadSignedUrl($input: GetUploadSignedUrlInput!) {
+  getUploadSignedUrl(input: $input)
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root',
+  })
+export class GetUploadSignedUrlGQL extends Apollo.Query<GetUploadSignedUrlQuery, GetUploadSignedUrlQueryVariables> {
+    document = GetUploadSignedUrlDocument;
+
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+}
+export const SavePostDocument = gql`
+    mutation savePost($input: SavePostInput!) {
+  savePost(input: $input) {
     ... on Post {
       id
       title
@@ -165,44 +267,52 @@ export const CreatePostDocument = gql`
         name
       }
       media {
+        id
         title
         caption
+        type
         url
       }
     }
     ... on BadInput {
       message
+      reason
     }
     ... on Unauthorized {
       message
+      reason
+    }
+    ... on ServerError {
+      message
+      reason
     }
   }
 }
     `;
 
   @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
   })
-  export class CreatePostGQL extends Apollo.Mutation<CreatePostMutation, CreatePostMutationVariables> {
-    document = CreatePostDocument;
-    
+export class SavePostGQL extends Apollo.Mutation<SavePostMutation, SavePostMutationVariables> {
+    document = SavePostDocument;
+
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
-  }
-export const GetUploadSignedUrlDocument = gql`
-    query getUploadSignedUrl($input: GetUploadSignedUrlInput!) {
-  getUploadSignedUrl(input: $input)
+}
+export const ValidateTokenDocument = gql`
+    query validateToken($token: String!) {
+  validateToken(token: $token)
 }
     `;
 
   @Injectable({
-    providedIn: 'root'
+    providedIn: 'root',
   })
-  export class GetUploadSignedUrlGQL extends Apollo.Query<GetUploadSignedUrlQuery, GetUploadSignedUrlQueryVariables> {
-    document = GetUploadSignedUrlDocument;
-    
+export class ValidateTokenGQL extends Apollo.Query<ValidateTokenQuery, ValidateTokenQueryVariables> {
+    document = ValidateTokenDocument;
+
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
-  }
+}

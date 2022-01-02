@@ -34,17 +34,19 @@
   </div>
   <mat-divider></mat-divider>
   <div class="section">
+    <div class="add-image-button-container">
+      <app-file-selector (files)="handleFileChange($event)">
+        <button type="button large" class="button">Add Images<br/>+</button>
+      </app-file-selector>
+    </div>
     <div class="grid-container">
       <div class="grid-x grid-margin-x">
-        <div class="cell small-4">
-          <div class="add-image-button-container">
-            <app-file-selector (files)="handleFileChange($event)">
-              <button type="button large" class="button">Add Image by clicking me or dragging images here</button>
-            </app-file-selector>
-          </div>
-        </div>
         <div *ngFor="let mediaItem of media" class="cell small-4">
-          <app-editable-image [mediaItem]=mediaItem (mediaChange)="handleMediaChange($event)"></app-editable-image>
+          <app-editable-image
+            [mediaItem]=mediaItem
+            (mediaChange)="handleMediaChange($event)"
+            (close)="handleMediaDelete(mediaItem)"
+          ></app-editable-image>
         </div>
       </div>
     </div>

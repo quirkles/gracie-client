@@ -4,11 +4,9 @@
     margin: 1rem;
   }
   .add-image-button-container {
-    height: 100%;
+    display: inline-block;
     button {
       min-height: 6rem;
-      max-height: 90%;
-      flex-grow: 1;
       font-size: x-large;
     }
   }

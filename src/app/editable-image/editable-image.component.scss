@@ -1,0 +1,13 @@
+@import "src/assets/styles/settings";
+
+.card {
+  position: relative;
+
+  i {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+    cursor: pointer;
+    color: $white;
+  }
+}

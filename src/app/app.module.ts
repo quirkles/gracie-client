@@ -19,7 +19,10 @@ import {CreatePostComponent} from './create-post/create-post.component';
 import {EditableTextComponent} from './editable-text/editable-text.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
-import { EditableImageComponent } from './editable-image/editable-image.component';
+import {EditableImageComponent} from './editable-image/editable-image.component';
+import {AlertsComponent} from './alerts/alerts.component';
+import {PostsComponent} from './posts/posts.component';
+import { SplashComponent } from './splash/splash.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +33,9 @@ import { EditableImageComponent } from './editable-image/editable-image.componen
     CreatePostComponent,
     EditableTextComponent,
     EditableImageComponent,
+    AlertsComponent,
+    PostsComponent,
+    SplashComponent,
   ],
   imports: [
     BrowserModule,
