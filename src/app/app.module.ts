@@ -23,6 +23,7 @@ import {EditableImageComponent} from './editable-image/editable-image.component'
 import {AlertsComponent} from './alerts/alerts.component';
 import {PostsComponent} from './posts/posts.component';
 import { SplashComponent } from './splash/splash.component';
+import { TimelineComponent } from './timeline/timeline.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { SplashComponent } from './splash/splash.component';
     AlertsComponent,
     PostsComponent,
     SplashComponent,
+    TimelineComponent,
   ],
   imports: [
     BrowserModule,
