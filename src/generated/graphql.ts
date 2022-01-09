@@ -1,5 +1,5 @@
-import {gql} from 'apollo-angular';
-import {Injectable} from '@angular/core';
+import { gql } from 'apollo-angular';
+import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -26,6 +26,7 @@ export type CreateUserResponse = BadInput | ServerError | Unauthorized | User;
 
 export type Edge = {
   __typename?: 'Edge';
+  cursor?: Maybe<Scalars['String']>;
   node?: Maybe<Post>;
 };
 
@@ -74,9 +75,14 @@ export type MutationSavePostArgs = {
 export type PageInfo = {
   __typename?: 'PageInfo';
   endCursor?: Maybe<Scalars['String']>;
-  hasNextPage?: Maybe<Scalars['Boolean']>;
-  hasPreviousPage?: Maybe<Scalars['Boolean']>;
   startCursor?: Maybe<Scalars['String']>;
+};
+
+export type PaginationArguments = {
+  after?: Maybe<Scalars['String']>;
+  before?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 };
 
 export type Post = {
@@ -95,10 +101,12 @@ export type PostConnection = {
   pageInfo: PageInfo;
 };
 
+export type PostConnectionResponse = BadInput | PostConnection | ServerError | Unauthorized;
+
 export type Query = {
   __typename?: 'Query';
   encryptTest: Scalars['String'];
-  getPostConnection: PostConnection;
+  getPosts: PostConnectionResponse;
   getRoles: Array<Maybe<RoleType>>;
   getUploadSignedUrl: Scalars['String'];
   validateToken: Scalars['Boolean'];
@@ -107,6 +115,12 @@ export type Query = {
 
 export type QueryEncryptTestArgs = {
   text: Scalars['String'];
+};
+
+
+export type QueryGetPostsArgs = {
+  paginationArguments?: Maybe<PaginationArguments>;
+  sortArguments?: Maybe<SortArguments>;
 };
 
 
@@ -155,6 +169,16 @@ export type ServerError = {
   reason?: Maybe<Scalars['String']>;
 };
 
+export type SortArguments = {
+  sortBy?: Maybe<Scalars['String']>;
+  sortOrder?: Maybe<SortOrderEnum>;
+};
+
+export enum SortOrderEnum {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
 export type Unauthorized = {
   __typename?: 'Unauthorized';
   message?: Maybe<Scalars['String']>;
@@ -186,6 +210,14 @@ export type AuthorizeMutationVariables = Exact<{
 
 
 export type AuthorizeMutation = { __typename?: 'Mutation', authorize?: Maybe<{ __typename?: 'ServerError', message?: Maybe<string>, reason?: Maybe<string> } | { __typename?: 'UserNotFound', message?: Maybe<string> } | { __typename?: 'UserWithToken', token?: Maybe<string>, user?: Maybe<{ __typename?: 'User', id?: Maybe<string> }> }> };
+
+export type GetPaginatedPostsQueryVariables = Exact<{
+  paginationArguments: PaginationArguments;
+  sortArguments?: Maybe<SortArguments>;
+}>;
+
+
+export type GetPaginatedPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'BadInput', message?: Maybe<string> } | { __typename?: 'PostConnection', edges: Array<Maybe<{ __typename?: 'Edge', cursor?: Maybe<string>, node?: Maybe<{ __typename?: 'Post', id?: Maybe<string>, body?: Maybe<string>, title?: Maybe<string>, date?: Maybe<string>, media?: Maybe<Array<{ __typename?: 'Media', id?: Maybe<string>, caption?: Maybe<string>, title?: Maybe<string> }>> }> }>>, pageInfo: { __typename?: 'PageInfo', startCursor?: Maybe<string>, endCursor?: Maybe<string> } } | { __typename?: 'ServerError' } | { __typename?: 'Unauthorized' } };
 
 export type GetUploadSignedUrlQueryVariables = Exact<{
   input: GetUploadSignedUrlInput;
@@ -229,15 +261,58 @@ export const AuthorizeDocument = gql`
     `;
 
   @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
   })
-export class AuthorizeGQL extends Apollo.Mutation<AuthorizeMutation, AuthorizeMutationVariables> {
+  export class AuthorizeGQL extends Apollo.Mutation<AuthorizeMutation, AuthorizeMutationVariables> {
     document = AuthorizeDocument;
-
+    
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
+  }
+export const GetPaginatedPostsDocument = gql`
+    query getPaginatedPosts($paginationArguments: PaginationArguments!, $sortArguments: SortArguments) {
+  getPosts(
+    paginationArguments: $paginationArguments
+    sortArguments: $sortArguments
+  ) {
+    ... on PostConnection {
+      edges {
+        cursor
+        node {
+          id
+          body
+          title
+          date
+          media {
+            id
+            caption
+            title
+          }
+        }
+      }
+      pageInfo {
+        startCursor
+        endCursor
+      }
+    }
+    ... on BadInput {
+      message
+    }
+  }
 }
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class GetPaginatedPostsGQL extends Apollo.Query<GetPaginatedPostsQuery, GetPaginatedPostsQueryVariables> {
+    document = GetPaginatedPostsDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
 export const GetUploadSignedUrlDocument = gql`
     query getUploadSignedUrl($input: GetUploadSignedUrlInput!) {
   getUploadSignedUrl(input: $input)
@@ -245,15 +320,15 @@ export const GetUploadSignedUrlDocument = gql`
     `;
 
   @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
   })
-export class GetUploadSignedUrlGQL extends Apollo.Query<GetUploadSignedUrlQuery, GetUploadSignedUrlQueryVariables> {
+  export class GetUploadSignedUrlGQL extends Apollo.Query<GetUploadSignedUrlQuery, GetUploadSignedUrlQueryVariables> {
     document = GetUploadSignedUrlDocument;
-
+    
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
-}
+  }
 export const SavePostDocument = gql`
     mutation savePost($input: SavePostInput!) {
   savePost(input: $input) {
@@ -291,15 +366,15 @@ export const SavePostDocument = gql`
     `;
 
   @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
   })
-export class SavePostGQL extends Apollo.Mutation<SavePostMutation, SavePostMutationVariables> {
+  export class SavePostGQL extends Apollo.Mutation<SavePostMutation, SavePostMutationVariables> {
     document = SavePostDocument;
-
+    
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
-}
+  }
 export const ValidateTokenDocument = gql`
     query validateToken($token: String!) {
   validateToken(token: $token)
@@ -307,12 +382,12 @@ export const ValidateTokenDocument = gql`
     `;
 
   @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
   })
-export class ValidateTokenGQL extends Apollo.Query<ValidateTokenQuery, ValidateTokenQueryVariables> {
+  export class ValidateTokenGQL extends Apollo.Query<ValidateTokenQuery, ValidateTokenQueryVariables> {
     document = ValidateTokenDocument;
-
+    
     constructor(apollo: Apollo.Apollo) {
       super(apollo);
     }
-}
+  }

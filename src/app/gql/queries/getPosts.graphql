@@ -1,0 +1,27 @@
+query getPaginatedPosts($paginationArguments: PaginationArguments!, $sortArguments: SortArguments) {
+  getPosts(paginationArguments: $paginationArguments, sortArguments: $sortArguments) {
+    ... on PostConnection {
+      edges {
+        cursor
+        node {
+          id
+          body
+          title
+          date
+          media {
+            id
+            caption
+            title
+          }
+        }
+      }
+      pageInfo {
+        startCursor
+        endCursor
+      }
+    }
+    ... on BadInput {
+      message
+    }
+  }
+}

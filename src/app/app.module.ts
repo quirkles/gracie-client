@@ -24,6 +24,7 @@ import {AlertsComponent} from './alerts/alerts.component';
 import {PostsComponent} from './posts/posts.component';
 import { SplashComponent } from './splash/splash.component';
 import { TimelineComponent } from './timeline/timeline.component';
+import { TimelineItemComponent } from './timeline/timeline-item/timeline-item.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { TimelineComponent } from './timeline/timeline.component';
     PostsComponent,
     SplashComponent,
     TimelineComponent,
+    TimelineItemComponent,
   ],
   imports: [
     BrowserModule,

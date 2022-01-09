@@ -1,1 +1,7 @@
-<p>timeline works!</p>
+<div class="timeline">
+  <app-timeline-item
+    *ngFor="let post of posts; index as i;"
+    [post]="post"
+    alignment="{{ (i%2 ? 'right' : 'left') }}"
+  ></app-timeline-item>
+</div>
